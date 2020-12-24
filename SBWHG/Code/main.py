@@ -14,10 +14,10 @@ screen = pygame.display.set_mode((800, 600))
 
 # Background configurations
 
+
 background = pygame.image.load('C:\\Users\\Nasif Imtiaj\\Documents\\Projects\\SBWHG\\Pictures\\Background\\background1.png')
 mixer.music.load('C:\\Users\\Nasif Imtiaj\\Documents\\Projects\\SBWHG\\Musics\\background.wav')
 mixer.music.play(-1)
-
 
 # Caption and Icon configurations
 
@@ -131,7 +131,7 @@ bulletImg = pygame.image.load('C:\\Users\\Nasif Imtiaj\\Documents\\Projects\\SBW
 bulletX = 0
 bulletY = 480
 bulletX_change = 0
-bulletY_change = 10
+bulletY_change = 20
 bullet_state = "ready"
 
 def fire_bullet(x, y):
@@ -155,18 +155,348 @@ font = pygame.font.Font('freesansbold.ttf', 32)
 textX = 10
 testY = 10
 
-def show_score(x, y):
-    score = font.render("Score : " + str(score_value), True, (255, 255, 255))
+def show_score(player_name,x, y):
+    score = font.render("Player Name: "+player_name+"    "+"Score : " + str(score_value), True, (255, 255, 255))
     screen.blit(score, (x, y))
 
 # Game Over configurations
 
 over_font = pygame.font.Font('freesansbold.ttf', 64)
-
+g_o=1
 def game_over_text():
     over_text = over_font.render("GAME OVER", True, (255, 255, 255))
     screen.blit(over_text, (200, 250))
+    g_o=0
+#Database
+player_names=[]
+player_score=[]
+datas = list(zip(player_names, player_score))
+def read_from_data_base():
+    f = open("C:\\Users\\Nasif Imtiaj\\Documents\\Projects\\SBWHG\\Player Data\\data.txt", "r")
+    run=True
+    while run:
+        s = f.readline()
+        if (len(s) == 0):
+             break
+        b=s.split(" ")
+        player_names.append(b[0])
+        player_score.append(int(b[1]))
+    f.close()
 
+def update_data_base(p_n,p_s):
+    tmp=p_n.split(' ')
+    p_n=tmp[0]
+    player_names.append(p_n)
+    player_score.append(int(p_s))
+    datas = list(zip(player_names, player_score))
+    datas.sort(key=lambda x: x[1], reverse=True)
+    myfile = open("C:\\Users\\Nasif Imtiaj\\Documents\\Projects\\SBWHG\\Player Data\\data.txt", "w")
+    lim = 0
+    for i, j in datas:
+        x = str(j)
+        myfile.write(i + " " + x + "\n")
+        lim = lim + 1
+        if lim == 5:
+            break
+    myfile.close
+def show_list():
+    score = font.render("Player Name        Score", True, ( 133, 253, 6 ))
+    screen.blit(score, (200, 100))
+    it = 1
+    for i, j in datas:
+        score = font.render(i ,True, (  133, 253, 6))
+        screen.blit(score, (200, 100 + 50 * it))
+        score = font.render(str(j) ,True, (  133, 253, 6 ))
+        screen.blit(score, (500, 100 + 50 * it))
+        it = it + 1
+    score = font.render("Press space to continue", True, (255, 255, 255))
+    screen.blit(score, (200, 500))
+
+f=1
+read_from_data_base()
+datas = list(zip(player_names, player_score))
+datas.sort(key=lambda x: x[1], reverse=True)
+running = True
+while running:
+    screen.fill((0, 0, 0))
+    # Background Image
+    screen.blit(background, (0, 0))
+    if f==1:
+       show_list()
+    else:
+      break
+    #show_score(textX, testY)
+    for event in pygame.event.get():
+        if event.type == pygame.KEYDOWN:
+            if event.key == pygame.K_SPACE:
+                f=0
+    pygame.display.update()
+    k = cv2.waitKey(10)
+    if k == 27:
+        break
+name= "----------"
+pos=0
+f=1
+def entername():
+    score = font.render("Enter your name:", True, (133, 253, 6))
+    screen.blit(score, (100, 100))
+    score = font.render(name, True, ( 1, 1, 0 ))
+    screen.blit(score, (420, 100))
+    score = font.render("Enter Space to continue", True, (255, 255, 255))
+    screen.blit(score, (200 , 500))
+
+def welcome(str):
+    score = font.render("Welcome to Space Battle "+str, True, (133, 253, 6 ))
+    screen.blit(score, (100, 300))
+    #score = font.render()
+    score = font.render("Press Space to continue", True, (255, 255, 255))
+    screen.blit(score, (200, 500))
+
+def game_info():
+    g_info = font.render("Game Instruction: ",True,(133, 253, 6))
+    screen.blit(g_info,(100,90))
+    g_info1 = font.render("To Go Left: Show Two Fingers.", True, (133, 253, 6))
+    screen.blit(g_info1, (100, 190))
+    g_info2 = font.render("To Go Right: Show Three Fingers.", True, (133, 253, 6))
+    screen.blit(g_info2, (100, 290))
+    g_info3 = font.render("To Shoot: Show Four Fingers.", True, (133, 253, 6))
+    screen.blit(g_info3, (100, 390))
+    g_info4 = font.render("Press Space To Continue.", True, (255, 255, 255))
+    screen.blit(g_info4, (200, 490))
+    #screen.blit()
+def must_print_name():
+    g_info = font.render("You Must Enter Your Name.", True, (133, 253, 6))
+    screen.blit(g_info, (100, 300))
+
+mpr = 0
+
+bk=1
+while running:
+    if bk==0:
+        break
+    screen.fill((0, 0, 0))
+    # Background Image
+    screen.blit(background, (0, 0))
+    if mpr == 1:
+       must_print_name()
+    if f==1:
+        entername()
+
+    elif f==2:
+        game_info()
+    else :
+        welcome(name)
+    if pos:
+        mpr = 0
+    for event in pygame.event.get():
+        if event.type == pygame.KEYDOWN:
+            if event.key == pygame.K_SPACE:
+                if f>=3:
+                    bk=0
+                if(f==1 and pos):
+                  while pos<=9 and name[pos] == '-':
+                    str1 = list(name)
+                    str1[pos] = " "
+                    name = "".join(str1)
+                    pos = pos + 1
+                if(f==1 and pos==0):
+                      mpr = 1
+                else:
+                      f = f + 1
+                      print(pos)
+
+            if event.key == pygame.K_BACKSPACE:
+                pos = pos - 1
+                str1 = list(name)
+                str1[pos] = "-"
+                name = "".join(str1)
+                if pos < 0:
+                    pos = 0
+            if pos < 10:
+                if event.key == pygame.K_a:
+                    str1 = list(name)
+                    str1[pos] = "a"
+                    name = "".join(str1)
+                    pos = pos + 1
+                if event.key == pygame.K_b:
+                    str1 = list(name)
+                    str1[pos] = "b"
+                    name = "".join(str1)
+                    pos = pos + 1
+                if event.key == pygame.K_c:
+                    str1 = list(name)
+                    str1[pos] = "c"
+                    name = "".join(str1)
+                    pos = pos + 1
+                if event.key == pygame.K_d:
+                    str1 = list(name)
+                    str1[pos] = "d"
+                    name = "".join(str1)
+                    pos = pos + 1
+                if event.key == pygame.K_e:
+                    str1 = list(name)
+                    str1[pos] = "e"
+                    name = "".join(str1)
+                    pos = pos + 1
+                if event.key == pygame.K_f:
+                    str1 = list(name)
+                    str1[pos] = "f"
+                    name = "".join(str1)
+                    pos = pos + 1
+                if event.key == pygame.K_g:
+                    str1 = list(name)
+                    str1[pos] = "g"
+                    name = "".join(str1)
+                    pos = pos + 1
+                if event.key == pygame.K_h:
+                    str1 = list(name)
+                    str1[pos] = "h"
+                    name = "".join(str1)
+                    pos = pos + 1
+                if event.key == pygame.K_i:
+                    str1 = list(name)
+                    str1[pos] = "i"
+                    name = "".join(str1)
+                    pos = pos + 1
+                if event.key == pygame.K_j:
+                    str1 = list(name)
+                    str1[pos] = "j"
+                    name = "".join(str1)
+                    pos = pos + 1
+                if event.key == pygame.K_k:
+                    str1 = list(name)
+                    str1[pos] = "k"
+                    name = "".join(str1)
+                    pos = pos + 1
+                if event.key == pygame.K_l:
+                    str1 = list(name)
+                    str1[pos] = "l"
+                    name = "".join(str1)
+                    pos = pos + 1
+                if event.key == pygame.K_m:
+                    str1 = list(name)
+                    str1[pos] = "m"
+                    name = "".join(str1)
+                    pos = pos + 1
+                if event.key == pygame.K_n:
+                    str1 = list(name)
+                    str1[pos] = "n"
+                    name = "".join(str1)
+                    pos = pos + 1
+                if event.key == pygame.K_o:
+                    str1 = list(name)
+                    str1[pos] = "o"
+                    name = "".join(str1)
+                    pos = pos + 1
+                if event.key == pygame.K_p:
+                    str1 = list(name)
+                    str1[pos] = "p"
+                    name = "".join(str1)
+                    pos = pos + 1
+                if event.key == pygame.K_q:
+                    str1 = list(name)
+                    str1[pos] = "q"
+                    name = "".join(str1)
+                    pos = pos + 1
+                if event.key == pygame.K_r:
+                    str1 = list(name)
+                    str1[pos] = "r"
+                    name = "".join(str1)
+                    pos = pos + 1
+                if event.key == pygame.K_s:
+                    str1 = list(name)
+                    str1[pos] = "s"
+                    name = "".join(str1)
+                    pos = pos + 1
+                if event.key == pygame.K_t:
+                    str1 = list(name)
+                    str1[pos] = "t"
+                    name = "".join(str1)
+                    pos = pos + 1
+                if event.key == pygame.K_u:
+                    str1 = list(name)
+                    str1[pos] = "u"
+                    name = "".join(str1)
+                    pos = pos + 1
+                if event.key == pygame.K_v:
+                    str1 = list(name)
+                    str1[pos] = "v"
+                    name = "".join(str1)
+                    pos = pos + 1
+                if event.key == pygame.K_w:
+                    str1 = list(name)
+                    str1[pos] = "w"
+                    name = "".join(str1)
+                    pos = pos + 1
+                if event.key == pygame.K_x:
+                    str1 = list(name)
+                    str1[pos] = "x"
+                    name = "".join(str1)
+                    pos = pos + 1
+                if event.key == pygame.K_y:
+                    str1 = list(name)
+                    str1[pos] = "y"
+                    name = "".join(str1)
+                    pos = pos + 1
+                if event.key == pygame.K_z:
+                    str1 = list(name)
+                    str1[pos] = "z"
+                    name = "".join(str1)
+                    pos = pos + 1
+                if event.key == pygame.K_0:
+                    str1 = list(name)
+                    str1[pos] = "0"
+                    name = "".join(str1)
+                    pos = pos + 1
+                if event.key == pygame.K_1:
+                    str1 = list(name)
+                    str1[pos] = "1"
+                    name = "".join(str1)
+                    pos = pos + 1
+                if event.key == pygame.K_2:
+                    str1 = list(name)
+                    str1[pos] = "2"
+                    name = "".join(str1)
+                    pos = pos + 1
+                if event.key == pygame.K_3:
+                    str1 = list(name)
+                    str1[pos] = "3"
+                    name = "".join(str1)
+                    pos = pos + 1
+                if event.key == pygame.K_4:
+                    str1 = list(name)
+                    str1[pos] = "4"
+                    name = "".join(str1)
+                    pos = pos + 1
+                if event.key == pygame.K_5:
+                    str1 = list(name)
+                    str1[pos] = "5"
+                    name = "".join(str1)
+                    pos = pos + 1
+                if event.key == pygame.K_6:
+                    str1 = list(name)
+                    str1[pos] = "6"
+                    name = "".join(str1)
+                    pos = pos + 1
+                if event.key == pygame.K_7:
+                    str1 = list(name)
+                    str1[pos] = "7"
+                    name = "".join(str1)
+                    pos = pos + 1
+                if event.key == pygame.K_8:
+                    str1 = list(name)
+                    str1[pos] = "8"
+                    name = "".join(str1)
+                    pos = pos + 1
+                if event.key == pygame.K_9:
+                    str1 = list(name)
+                    str1[pos] = "9"
+                    name = "".join(str1)
+                    pos = pos + 1
+    pygame.display.update()
+    k = cv2.waitKey(10)
+    if k == 27:
+        break
 
 cap = cv2.VideoCapture(0)
 while(cap.isOpened()):
@@ -310,14 +640,17 @@ while(cap.isOpened()):
                 for j in range(num_of_enemies):
                     enemyY[j] = 2000
                 game_over_text()
+                if g_o==1:
+                    update_data_base(name, score_value)
+                    g_o=0
                 break
 
             enemyX[i] += enemyX_change[i]
             if enemyX[i] <= 0:
-                enemyX_change[i] = 2
+                enemyX_change[i] = 7
                 enemyY[i] += enemyY_change[i]
             elif enemyX[i] >= 736:
-                enemyX_change[i] = -2
+                enemyX_change[i] = -7
                 enemyY[i] += enemyY_change[i]
 
             # Collision
@@ -343,7 +676,7 @@ while(cap.isOpened()):
             bulletY -= bulletY_change
 
     player(playerX, playerY, player_it % 7)
-    show_score(testY, textX)
+    show_score(name,testY, textX)
     pygame.display.update()
     k = cv2.waitKey(10)
     if k == 27:
