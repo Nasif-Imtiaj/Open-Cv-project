@@ -1,3 +1,0 @@
-1st update on 12-05-2020:Demonstrated hand gesture and connected with a simple game.
-2nd update on 12-12-2020:Added game score, shifted contol movements toward right hand and fixed detecting issues.
-3rd update on 12-16-2020:Added animation to player and enemy. Added sounds effects. Updated sceneary and bullet picture.
